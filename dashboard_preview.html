@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Executive Dashboard - AcxiomCRM</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #2563EB;
+            --primary-hover: #1D4ED8;
+            --primary-light: #EFF6FF;
+            --secondary: #64748B;
+            --success: #10B981;
+            --success-light: #ECFDF5;
+            --warning: #F59E0B;
+            --warning-light: #FFFBEB;
+            --danger: #EF4444;
+            --danger-light: #FEF2F2;
+            --info: #06B6D4;
+            --dark: #0F172A;
+            --surface: #FFFFFF;
+            --background: #F8FAFC;
+            --border: #E2E8F0;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --radius-md: 10px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar-acxiom {
+            background: #0F172A;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            padding: 0.75rem 1.5rem;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.35rem;
+            color: #FFFFFF !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-brand span.badge-brand {
+            background: linear-gradient(135deg, #3B82F6, #6366F1);
+            color: #FFFFFF;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .nav-link {
+            color: #CBD5E1 !important;
+            font-weight: 500;
+            font-size: 0.925rem;
+            padding: 0.5rem 0.85rem !important;
+            border-radius: 6px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #FFFFFF !important;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .kpi-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .kpi-primary::before { background-color: var(--primary); }
+        .kpi-success::before { background-color: var(--success); }
+        .kpi-warning::before { background-color: var(--warning); }
+        .kpi-danger::before { background-color: var(--danger); }
+        .kpi-info::before { background-color: var(--info); }
+        .kpi-purple::before { background-color: #8B5CF6; }
+
+        .kpi-title {
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.4rem;
+        }
+
+        .kpi-value {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .kpi-subtext {
+            font-size: 0.775rem;
+            color: var(--text-muted);
+            margin-top: 0.4rem;
+        }
+
+        .chart-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+            height: 100%;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        footer {
+            margin-top: auto;
+            background-color: #FFFFFF;
+            border-top: 1px solid var(--border);
+            padding: 1rem 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-acxiom sticky-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <i class="bi bi-layers-half text-primary"></i>
+                    AcxiomCRM
+                    <span class="badge-brand">Enterprise</span>
+                </a>
+                
+                <div class="collapse navbar-collapse show" id="navbarContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#"><i class="bi bi-grid-1x2 me-1"></i> Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="bi bi-people me-1"></i> Customers</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="bi bi-funnel me-1"></i> Leads</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="bi bi-briefcase me-1"></i> Opportunities</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="bi bi-calendar-check me-1"></i> Follow-Ups</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="bi bi-clock-history me-1"></i> Activities</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="bi bi-bar-chart-line me-1"></i> Reports</a>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge bg-danger px-2 py-1 rounded">
+                            <i class="bi bi-person-badge me-1"></i> Admin
+                        </span>
+                        <div class="d-flex align-items-center gap-2 text-white small">
+                            <i class="bi bi-person-circle fs-5"></i>
+                            <span>System Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container-fluid py-4 px-md-4 flex-grow-1">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Executive Dashboard</h1>
+                <div class="text-muted small">
+                    Welcome back, <strong>System Administrator</strong> &bull; Authorized scope: <span class="badge bg-secondary">Admin (All Records)</span>
+                </div>
+            </div>
+
+            <!-- Date Filters -->
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <div class="btn-group shadow-sm" role="group">
+                    <button type="button" class="btn btn-sm btn-outline-secondary">Today</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary">This Week</button>
+                    <button type="button" class="btn btn-sm btn-primary">This Month</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-calendar-range me-1"></i> Custom</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8 Required KPI Cards -->
+        <div class="row g-3 mb-4">
+            <!-- 1. Total Customers -->
+            <div class="col-6 col-md-3">
+                <div class="kpi-card kpi-primary">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="kpi-title">Total Customers</div>
+                            <div class="kpi-value">3</div>
+                            <div class="kpi-subtext">Active client master records</div>
+                        </div>
+                        <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
+                            <i class="bi bi-building fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Total Leads -->
+            <div class="col-6 col-md-3">
+                <div class="kpi-card kpi-info">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="kpi-title">Total Leads</div>
+                            <div class="kpi-value">4</div>
+                            <div class="kpi-subtext">Prospects in funnel</div>
+                        </div>
+                        <div class="p-2 bg-info bg-opacity-10 text-info rounded-3">
+                            <i class="bi bi-funnel fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Open Leads -->
+            <div class="col-6 col-md-3">
+                <div class="kpi-card kpi-warning">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="kpi-title">Open Leads</div>
+                            <div class="kpi-value">3</div>
+                            <div class="kpi-subtext">Excludes converted & lost</div>
+                        </div>
+                        <div class="p-2 bg-warning bg-opacity-10 text-warning rounded-3">
+                            <i class="bi bi-lightning-charge fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Total Opportunities -->
+            <div class="col-6 col-md-3">
+                <div class="kpi-card kpi-purple">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="kpi-title">Total Opportunities</div>
+                            <div class="kpi-value">4</div>
+                            <div class="kpi-subtext">All pipeline entries</div>
+                        </div>
+                        <div class="p-2 bg-purple bg-opacity-10 text-purple rounded-3" style="background-color: rgba(139, 92, 246, 0.1); color: #8B5CF6;">
+                            <i class="bi bi-briefcase fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Open Opportunities -->
+            <div class="col-6 col-md-3">
+                <div class="kpi-card kpi-primary">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="kpi-title">Open Opportunities</div>
+                            <div class="kpi-value">3</div>
+                            <div class="kpi-subtext">Active negotiations</div>
+                        </div>
+                        <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
+                            <i class="bi bi-arrow-repeat fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Won Opportunities -->
+            <div class="col-6 col-md-3">
+                <div class="kpi-card kpi-success">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="kpi-title">Won Opportunities</div>
+                            <div class="kpi-value">1</div>
+                            <div class="kpi-subtext">Successfully closed</div>
+                        </div>
+                        <div class="p-2 bg-success bg-opacity-10 text-success rounded-3">
+                            <i class="bi bi-trophy fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Lost Opportunities -->
+            <div class="col-6 col-md-3">
+                <div class="kpi-card kpi-danger">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="kpi-title">Lost Opportunities</div>
+                            <div class="kpi-value">0</div>
+                            <div class="kpi-subtext">Unsuccessful deals</div>
+                        </div>
+                        <div class="p-2 bg-danger bg-opacity-10 text-danger rounded-3">
+                            <i class="bi bi-x-circle fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. Total Pipeline Value -->
+            <div class="col-6 col-md-3">
+                <div class="kpi-card kpi-success">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="kpi-title">Total Pipeline Value</div>
+                            <div class="kpi-value text-success">₹540,000</div>
+                            <div class="kpi-subtext">Weighted: ₹324,000</div>
+                        </div>
+                        <div class="p-2 bg-success bg-opacity-10 text-success rounded-3">
+                            <i class="bi bi-currency-rupee fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 Required Chart.js Visualizations -->
+        <div class="row g-4 mb-4">
+            <!-- Chart 1: Lead Status -->
+            <div class="col-12 col-lg-4">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h5 class="chart-title"><i class="bi bi-pie-chart me-2 text-primary"></i> Lead Status</h5>
+                        <span class="badge bg-light text-dark border">Funnel</span>
+                    </div>
+                    <div style="height: 280px; position: relative;">
+                        <canvas id="leadStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart 2: Opportunity Pipeline -->
+            <div class="col-12 col-lg-4">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h5 class="chart-title"><i class="bi bi-bar-chart-steps me-2 text-warning"></i> Opportunity Pipeline</h5>
+                        <span class="badge bg-light text-dark border">By Stage</span>
+                    </div>
+                    <div style="height: 280px; position: relative;">
+                        <canvas id="pipelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart 3: Monthly Sales -->
+            <div class="col-12 col-lg-4">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h5 class="chart-title"><i class="bi bi-graph-up-arrow me-2 text-success"></i> Monthly Sales</h5>
+                        <span class="badge bg-light text-dark border">Won Revenue</span>
+                    </div>
+                    <div style="height: 280px; position: relative;">
+                        <canvas id="monthlySalesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Follow-ups & Activities Feed -->
+        <div class="row g-4">
+            <div class="col-12 col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-alarm text-warning me-2"></i> Action Required: Pending Follow-Ups</h6>
+                        <span class="badge bg-primary">3 Tasks</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Related Entity</th>
+                                        <th>Due Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <span class="fw-semibold">Quarterly Architecture Review Call</span>
+                                            <span class="badge bg-light text-muted border ms-1">Call</span>
+                                        </td>
+                                        <td class="small text-muted">Apex Global Technologies</td>
+                                        <td class="small text-dark">Tomorrow, 10:00 AM</td>
+                                        <td><button class="btn btn-sm btn-outline-success py-0 px-2"><i class="bi bi-check2"></i> Done</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="fw-semibold">Contract Negotiations Meeting</span>
+                                            <span class="badge bg-light text-muted border ms-1">Meeting</span>
+                                        </td>
+                                        <td class="small text-muted">BlueHorizon Logistics Ltd</td>
+                                        <td class="small text-dark">In 3 Days</td>
+                                        <td><button class="btn btn-sm btn-outline-success py-0 px-2"><i class="bi bi-check2"></i> Done</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="fw-semibold">Product Demo for Pinnacle Retail</span>
+                                            <span class="badge bg-light text-muted border ms-1">Call</span>
+                                        </td>
+                                        <td class="small text-muted">Pinnacle Retailers</td>
+                                        <td class="small text-dark">In 4 Days</td>
+                                        <td><button class="btn btn-sm btn-outline-success py-0 px-2"><i class="bi bi-check2"></i> Done</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-clock-history text-primary me-2"></i> Recent Team Activities</h6>
+                        <span class="badge bg-light text-muted border">Latest 3</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-3 py-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary me-2">Call</span>
+                                        <span class="fw-semibold text-dark">Initial Discovery Discussion</span>
+                                        <span class="text-muted small">&bull; Apex Global Technologies</span>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-light text-muted border">Alex Morgan</span>
+                                        <div class="text-muted" style="font-size: 0.75rem;">15 mins ago</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item px-3 py-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-success bg-opacity-10 text-success me-2">Meeting</span>
+                                        <span class="fw-semibold text-dark">Stakeholder Alignment Presentation</span>
+                                        <span class="text-muted small">&bull; BlueHorizon Logistics</span>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-light text-muted border">David Chen</span>
+                                        <div class="text-muted" style="font-size: 0.75rem;">2 hours ago</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item px-3 py-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-info bg-opacity-10 text-info me-2">Email</span>
+                                        <span class="fw-semibold text-dark">Sent Proposal Document v1.2</span>
+                                        <span class="text-muted small">&bull; Apex Global Technologies</span>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-light text-muted border">Alex Morgan</span>
+                                        <div class="text-muted" style="font-size: 0.75rem;">Yesterday</div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center text-muted">
+        <div class="container-fluid">
+            <span>&copy; 2026 AcxiomCRM Enterprise System &bull; Production Architecture Baseline</span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <script>
+        // Chart 1: Lead Status
+        new Chart(document.getElementById('leadStatusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['New', 'Contacted', 'Qualified', 'Lost', 'Converted'],
+                datasets: [{
+                    data: [1, 1, 1, 1, 0],
+                    backgroundColor: ['#3B82F6', '#F59E0B', '#10B981', '#EF4444', '#8B5CF6'],
+                    borderWidth: 2,
+                    borderColor: '#FFFFFF'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 12, padding: 15, font: { family: "'Plus Jakarta Sans', sans-serif", size: 12 } }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+
+        // Chart 2: Pipeline
+        new Chart(document.getElementById('pipelineChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Qualification', 'Proposal', 'Negotiation', 'Won', 'Lost'],
+                datasets: [{
+                    label: 'Pipeline Value (₹)',
+                    data: [120000, 240000, 180000, 95000, 0],
+                    backgroundColor: ['#60A5FA', '#FBBF24', '#F97316', '#10B981', '#EF4444'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(v) { return '₹' + (v >= 1000 ? (v / 1000) + 'k' : v); },
+                            font: { family: "'Plus Jakarta Sans', sans-serif" }
+                        },
+                        grid: { color: '#F1F5F9' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: "'Plus Jakarta Sans', sans-serif" } }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Chart 3: Monthly Sales
+        new Chart(document.getElementById('monthlySalesChart'), {
+            type: 'line',
+            data: {
+                labels: ['May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026', 'Sep 2026', 'Oct 2026'],
+                datasets: [{
+                    label: 'Revenue Won (₹)',
+                    data: [0, 45000, 0, 80000, 95000, 0],
+                    borderColor: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#10B981',
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(v) { return '₹' + (v >= 1000 ? (v / 1000) + 'k' : v); },
+                            font: { family: "'Plus Jakarta Sans', sans-serif" }
+                        },
+                        grid: { color: '#F1F5F9' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: "'Plus Jakarta Sans', sans-serif" } }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+</body>
+</html>

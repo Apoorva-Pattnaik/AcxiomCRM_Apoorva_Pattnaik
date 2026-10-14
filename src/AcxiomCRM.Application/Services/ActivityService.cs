@@ -3,16 +3,15 @@ using AcxiomCRM.Application.Interfaces;
 using AcxiomCRM.Application.ViewModels;
 using AcxiomCRM.Domain.Entities;
 using AcxiomCRM.Domain.Enums;
-using AcxiomCRM.Infrastructure.Data;
 
 namespace AcxiomCRM.Application.Services;
 
 public class ActivityService : IActivityService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
     private readonly IAuditService _auditService;
 
-    public ActivityService(ApplicationDbContext context, IAuditService auditService)
+    public ActivityService(IApplicationDbContext context, IAuditService auditService)
     {
         _context = context;
         _auditService = auditService;

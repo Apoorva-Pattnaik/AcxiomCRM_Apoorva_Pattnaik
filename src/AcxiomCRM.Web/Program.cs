@@ -51,6 +51,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // 4. Register Application & Infrastructure Services
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<ILeadService, LeadService>();

@@ -4,17 +4,16 @@ using AcxiomCRM.Application.Interfaces;
 using AcxiomCRM.Application.ViewModels;
 using AcxiomCRM.Domain.Entities;
 using AcxiomCRM.Domain.Enums;
-using AcxiomCRM.Infrastructure.Data;
 
 namespace AcxiomCRM.Application.Services;
 
 public class LeadService : ILeadService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
     private readonly IAuditService _auditService;
     private readonly ICustomerService _customerService;
 
-    public LeadService(ApplicationDbContext context, IAuditService auditService, ICustomerService customerService)
+    public LeadService(IApplicationDbContext context, IAuditService auditService, ICustomerService customerService)
     {
         _context = context;
         _auditService = auditService;
@@ -353,7 +352,7 @@ public class LeadService : ILeadService
         if (model.CreateOpportunity && model.ExpectedCloseDate.Date < DateTime.UtcNow.Date)
             return (false, "Expected Close Date cannot be in the past.", null, null);
 
-        using var transaction = await _context.Database.BeginTransactionAsync();
+        using var transaction = await _context.BeginTransactionAsync();
         try
         {
             int? createdCustomerId = null;

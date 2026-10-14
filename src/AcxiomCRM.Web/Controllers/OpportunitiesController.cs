@@ -17,13 +17,13 @@ public class OpportunitiesController : Controller
 {
     private readonly IOpportunityService _opportunityService;
     private readonly IUserService _userService;
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public OpportunitiesController(
         IOpportunityService opportunityService,
         IUserService userService,
-        ApplicationDbContext context,
+        IApplicationDbContext context,
         UserManager<ApplicationUser> userManager)
     {
         _opportunityService = opportunityService;

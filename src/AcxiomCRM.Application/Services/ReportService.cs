@@ -4,16 +4,15 @@ using AcxiomCRM.Application.Interfaces;
 using AcxiomCRM.Application.ViewModels;
 using AcxiomCRM.Domain.Entities;
 using AcxiomCRM.Domain.Enums;
-using AcxiomCRM.Infrastructure.Data;
 
 namespace AcxiomCRM.Application.Services;
 
 public class ReportService : IReportService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public ReportService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public ReportService(IApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
         _context = context;
         _userManager = userManager;

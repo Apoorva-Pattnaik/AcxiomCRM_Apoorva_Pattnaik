@@ -17,13 +17,13 @@ public class FollowUpsController : Controller
 {
     private readonly IFollowUpService _followUpService;
     private readonly IUserService _userService;
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public FollowUpsController(
         IFollowUpService followUpService,
         IUserService userService,
-        ApplicationDbContext context,
+        IApplicationDbContext context,
         UserManager<ApplicationUser> userManager)
     {
         _followUpService = followUpService;

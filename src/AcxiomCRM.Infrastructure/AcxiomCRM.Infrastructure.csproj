@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AcxiomCRM.Domain\AcxiomCRM.Domain.csproj" />
+    <ProjectReference Include="..\AcxiomCRM.Application\AcxiomCRM.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,16 +4,15 @@ using AcxiomCRM.Application.Interfaces;
 using AcxiomCRM.Application.ViewModels;
 using AcxiomCRM.Domain.Entities;
 using AcxiomCRM.Domain.Enums;
-using AcxiomCRM.Infrastructure.Data;
 
 namespace AcxiomCRM.Application.Services;
 
 public class FollowUpService : IFollowUpService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
     private readonly IAuditService _auditService;
 
-    public FollowUpService(ApplicationDbContext context, IAuditService auditService)
+    public FollowUpService(IApplicationDbContext context, IAuditService auditService)
     {
         _context = context;
         _auditService = auditService;

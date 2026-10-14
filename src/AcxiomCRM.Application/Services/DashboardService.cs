@@ -3,15 +3,14 @@ using AcxiomCRM.Application.Interfaces;
 using AcxiomCRM.Application.ViewModels;
 using AcxiomCRM.Domain.Entities;
 using AcxiomCRM.Domain.Enums;
-using AcxiomCRM.Infrastructure.Data;
 
 namespace AcxiomCRM.Application.Services;
 
 public class DashboardService : IDashboardService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
 
-    public DashboardService(ApplicationDbContext context)
+    public DashboardService(IApplicationDbContext context)
     {
         _context = context;
     }

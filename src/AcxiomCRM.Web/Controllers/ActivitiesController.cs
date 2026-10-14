@@ -17,13 +17,13 @@ public class ActivitiesController : Controller
 {
     private readonly IActivityService _activityService;
     private readonly IUserService _userService;
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public ActivitiesController(
         IActivityService activityService,
         IUserService userService,
-        ApplicationDbContext context,
+        IApplicationDbContext context,
         UserManager<ApplicationUser> userManager)
     {
         _activityService = activityService;
