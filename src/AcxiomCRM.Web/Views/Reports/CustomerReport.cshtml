@@ -1,0 +1,97 @@
+@model AcxiomCRM.Application.ViewModels.CustomerReportViewModel
+@{
+    ViewData["Title"] = "Customer Report";
+}
+
+<div class="page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-custom">
+                <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Customer Report</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Customer Portfolio Report</h1>
+        <div class="text-muted small">Total Accounts: <strong>@Model.TotalCustomers</strong> &bull; Active: <strong>@Model.ActiveCustomers</strong></div>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-card">
+    <form method="get" asp-action="CustomerReport" class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">From Date</label>
+            <input type="date" name="fromDate" class="form-control form-control-sm" value="@(Model.FromDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">To Date</label>
+            <input type="date" name="toDate" class="form-control form-control-sm" value="@(Model.ToDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold">Status</label>
+            <select name="status" class="form-select form-select-sm" asp-for="StatusFilter" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.CustomerStatus>()">
+                <option value="">-- All --</option>
+            </select>
+        </div>
+        @if (ViewBag.Owners != null)
+        {
+            <div class="col-md-2">
+                <label class="form-label small fw-bold">Account Owner</label>
+                <select name="ownerId" class="form-select form-select-sm" asp-for="OwnerFilter" asp-items="ViewBag.Owners">
+                    <option value="">-- All Reps --</option>
+                </select>
+            </div>
+        }
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-sm btn-primary w-100">Apply</button>
+            <a asp-action="CustomerReport" class="btn btn-sm btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+</div>
+
+<!-- Table -->
+<div class="crm-table-container">
+    <div class="table-responsive">
+        <table class="table crm-table align-middle">
+            <thead>
+                <tr>
+                    <th>Customer Code</th>
+                    <th>Customer Name</th>
+                    <th>Contact</th>
+                    <th>Company</th>
+                    <th>Status</th>
+                    <th>Account Owner</th>
+                    <th>Total Won Value</th>
+                    <th>Created Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Rows.Any())
+                {
+                    @foreach (var r in Model.Rows)
+                    {
+                        <tr>
+                            <td><span class="badge bg-light text-dark border font-monospace">@r.CustomerCode</span></td>
+                            <td class="fw-bold">@r.CustomerName</td>
+                            <td class="small">
+                                <div>@r.Email</div>
+                                <div class="text-muted">@r.Phone</div>
+                            </td>
+                            <td class="small text-muted">@(r.CompanyName ?? "—")</td>
+                            <td><span class="badge-status badge-status-active">@r.Status</span></td>
+                            <td class="small"><span class="badge bg-light text-dark border">@r.OwnerName</span></td>
+                            <td class="fw-bold text-success">₹@r.TotalWonValue.ToString("N0")</td>
+                            <td class="small text-muted">@r.CreatedDate.ToString("yyyy-MM-dd")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">No customer data available for selected filter range.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

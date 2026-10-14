@@ -1,0 +1,230 @@
+@model AcxiomCRM.Application.ViewModels.FollowUpListViewModel
+@{
+    ViewData["Title"] = "Follow-Up Management";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Follow-Up & Engagement Schedule</h1>
+        <div class="text-muted small">Stay on top of customer check-ins, prospect demos, and pipeline milestones</div>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-calendar-plus me-1"></i> Schedule Follow-Up
+    </a>
+</div>
+
+<!-- Upcoming & Overdue Summary Banners -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 bg-warning bg-opacity-10 border-start border-warning border-4 rounded-3 p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold text-warning mb-1"><i class="bi bi-alarm me-1"></i> Overdue Tasks (@Model.OverdueFollowUps.Count)</h6>
+                    <div class="small text-muted">Planned follow-ups with scheduled dates in the past</div>
+                </div>
+            </div>
+            @if (Model.OverdueFollowUps.Any())
+            {
+                <ul class="list-group list-group-flush bg-transparent mt-2 small">
+                    @foreach (var o in Model.OverdueFollowUps)
+                    {
+                        <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-1">
+                            <span class="fw-semibold text-danger">@o.Subject (@o.FollowUpDate.ToString("yyyy-MM-dd"))</span>
+                            <form asp-action="Complete" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@o.FollowUpId" />
+                                <button type="submit" class="btn btn-xs btn-outline-success py-0 px-2">Complete</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 bg-primary bg-opacity-10 border-start border-primary border-4 rounded-3 p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold text-primary mb-1"><i class="bi bi-calendar-event me-1"></i> Upcoming Next (@Model.UpcomingFollowUps.Count)</h6>
+                    <div class="small text-muted">Next 5 planned engagements</div>
+                </div>
+            </div>
+            @if (Model.UpcomingFollowUps.Any())
+            {
+                <ul class="list-group list-group-flush bg-transparent mt-2 small">
+                    @foreach (var u in Model.UpcomingFollowUps)
+                    {
+                        <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-1">
+                            <span class="text-dark">@u.Subject &bull; <span class="text-muted">@u.FollowUpDate.ToString("MMM dd, HH:mm")</span></span>
+                            <span class="badge bg-light text-dark border">@u.FollowUpType</span>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="filter-card">
+    <form method="get" asp-action="Index" class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">Status</label>
+            <select name="status" class="form-select form-select-sm" asp-for="StatusFilter" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.FollowUpStatus>()">
+                <option value="">-- All Statuses --</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">Type</label>
+            <select name="type" class="form-select form-select-sm" asp-for="TypeFilter" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.FollowUpType>()">
+                <option value="">-- All Types --</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">Date</label>
+            <input type="date" name="date" class="form-control form-control-sm" value="@(Model.DateFilter?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-sm btn-primary w-100">Filter</button>
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+</div>
+
+<!-- FollowUps Table -->
+<div class="crm-table-container">
+    <div class="table-responsive">
+        <table class="table crm-table align-middle">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Type</th>
+                    <th>Scheduled Date</th>
+                    <th>Related To</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    <th>Assigned Rep</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.FollowUps.Any())
+                {
+                    @foreach (var f in Model.FollowUps)
+                    {
+                        <tr>
+                            <td>
+                                <span class="fw-bold text-dark">@f.Subject</span>
+                            </td>
+                            <td><span class="badge bg-light text-dark border">@f.FollowUpType</span></td>
+                            <td>
+                                <span class="@(f.IsOverdue ? "text-danger fw-bold" : "text-dark")">
+                                    @f.FollowUpDate.ToString("yyyy-MM-dd HH:mm")
+                                </span>
+                                @if (f.IsOverdue)
+                                {
+                                    <span class="badge bg-danger ms-1">Overdue</span>
+                                }
+                            </td>
+                            <td class="small">
+                                @if (!string.IsNullOrEmpty(f.CustomerName))
+                                {
+                                    <div><i class="bi bi-building text-muted me-1"></i> @f.CustomerName</div>
+                                }
+                                else if (!string.IsNullOrEmpty(f.LeadName))
+                                {
+                                    <div><i class="bi bi-funnel text-muted me-1"></i> @f.LeadName</div>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td>
+                                @if (f.Status == AcxiomCRM.Domain.Enums.FollowUpStatus.Completed)
+                                {
+                                    <span class="badge-status badge-status-completed"><i class="bi bi-check-circle"></i> Completed</span>
+                                }
+                                else if (f.Status == AcxiomCRM.Domain.Enums.FollowUpStatus.Planned)
+                                {
+                                    <span class="badge-status badge-status-planned"><i class="bi bi-clock"></i> Planned</span>
+                                }
+                                else if (f.Status == AcxiomCRM.Domain.Enums.FollowUpStatus.Missed)
+                                {
+                                    <span class="badge-status badge-status-missed"><i class="bi bi-exclamation-circle"></i> Missed</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary text-white">@f.Status</span>
+                                }
+                            </td>
+                            <td class="small text-muted text-truncate" style="max-width: 150px;">
+                                @(f.Remarks ?? "—")
+                            </td>
+                            <td class="small"><span class="badge bg-light text-muted border">@f.AssignedToUserName</span></td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    @if (f.Status == AcxiomCRM.Domain.Enums.FollowUpStatus.Planned)
+                                    {
+                                        <form asp-action="Complete" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@f.FollowUpId" />
+                                            <button type="submit" class="btn btn-outline-success" title="Mark Completed">
+                                                <i class="bi bi-check2"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    <a asp-action="Edit" asp-route-id="@f.FollowUpId" class="btn btn-outline-primary" title="Edit / Reschedule">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@f.FollowUpId" method="post" class="d-inline" onsubmit="return confirm('Cancel this follow-up?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger" title="Cancel Follow-Up">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-calendar-check fs-2 text-muted d-block mb-2"></i>
+                            No follow-up items found.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+        <div class="d-flex justify-content-between align-items-center p-3 border-top">
+            <div class="text-muted small">
+                Showing page <strong>@Model.CurrentPage</strong> of <strong>@Model.TotalPages</strong> (Total: @Model.TotalItems records)
+            </div>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)">Previous</a>
+                    </li>
+                    @for (int p = 1; p <= Model.TotalPages; p++)
+                    {
+                        <li class="page-item @(p == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@p">@p</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+</div>

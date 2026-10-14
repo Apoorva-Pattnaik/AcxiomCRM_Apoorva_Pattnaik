@@ -1,0 +1,102 @@
+@model AcxiomCRM.Application.ViewModels.LeadReportViewModel
+@{
+    ViewData["Title"] = "Lead Report";
+}
+
+<div class="page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-custom">
+                <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Lead Report</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Lead Pipeline & Source Report</h1>
+        <div class="text-muted small">
+            Total Leads: <strong>@Model.TotalLeads</strong> &bull; Converted: <strong>@Model.ConvertedCount</strong> (@Model.ConversionRate% conversion rate) &bull; Total Pipeline Inflow: <strong>₹@Model.TotalExpectedValue.ToString("N0")</strong>
+        </div>
+    </div>
+</div>
+
+<div class="filter-card">
+    <form method="get" asp-action="LeadReport" class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">From Date</label>
+            <input type="date" name="fromDate" class="form-control form-control-sm" value="@(Model.FromDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">To Date</label>
+            <input type="date" name="toDate" class="form-control form-control-sm" value="@(Model.ToDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold">Status</label>
+            <select name="status" class="form-select form-select-sm" asp-for="StatusFilter" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.LeadStatus>()">
+                <option value="">-- All --</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold">Source</label>
+            <input type="text" name="source" class="form-control form-control-sm" placeholder="Website, Referral..." value="@Model.SourceFilter" />
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-sm btn-primary w-100">Apply</button>
+            <a asp-action="LeadReport" class="btn btn-sm btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+</div>
+
+<div class="crm-table-container">
+    <div class="table-responsive">
+        <table class="table crm-table align-middle">
+            <thead>
+                <tr>
+                    <th>Lead Code</th>
+                    <th>Lead Name</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Expected Value</th>
+                    <th>Conversion Details</th>
+                    <th>Owner</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Rows.Any())
+                {
+                    @foreach (var r in Model.Rows)
+                    {
+                        <tr>
+                            <td><span class="badge bg-light text-dark border font-monospace">@r.LeadCode</span></td>
+                            <td class="fw-bold">@r.LeadName</td>
+                            <td><span class="badge bg-light text-dark border">@r.Source</span></td>
+                            <td>
+                                <span class="badge @(r.IsConverted ? "bg-purple text-white" : "bg-primary")">@r.Status</span>
+                            </td>
+                            <td><span class="badge bg-light text-dark border">@r.Priority</span></td>
+                            <td class="fw-bold text-dark">₹@r.ExpectedValue.ToString("N0")</td>
+                            <td class="small">
+                                @if (r.IsConverted)
+                                {
+                                    <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i> Converted: @r.ConvertedCustomerName</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Unconverted</span>
+                                }
+                            </td>
+                            <td class="small"><span class="badge bg-light text-dark border">@r.OwnerName</span></td>
+                            <td class="small text-muted">@r.CreatedDate.ToString("yyyy-MM-dd")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">No lead data matching filter criteria.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

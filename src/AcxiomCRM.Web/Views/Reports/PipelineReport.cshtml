@@ -1,0 +1,124 @@
+@model AcxiomCRM.Application.ViewModels.PipelineReportViewModel
+@{
+    ViewData["Title"] = "Pipeline Report";
+}
+
+<div class="page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-custom">
+                <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Pipeline Report</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Commercial Pipeline & Forecasting Report</h1>
+        <div class="text-muted small">
+            Open Deals: <strong>@Model.TotalOpenDeals</strong> &bull; Total Pipeline: <strong>₹@Model.TotalPipelineValue.ToString("N0")</strong> &bull; Weighted Pipeline: <strong>₹@Model.TotalWeightedValue.ToString("N0")</strong>
+        </div>
+    </div>
+</div>
+
+<!-- Summaries by Stage & Owner -->
+<div class="row g-4 mb-4">
+    <!-- Stage Breakdown -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-funnel text-primary me-2"></i> Stage-Wise Pipeline Distribution</h6>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Stage</th>
+                            <th>Deals</th>
+                            <th>Total Value</th>
+                            <th>Weighted Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.StageSummaries)
+                        {
+                            <tr>
+                                <td><span class="badge bg-light text-dark border">@s.Stage</span></td>
+                                <td>@s.DealCount</td>
+                                <td class="fw-bold">₹@s.TotalAmount.ToString("N0")</td>
+                                <td class="text-success font-monospace">₹@s.WeightedAmount.ToString("N0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Owner Breakdown -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-person-badge text-success me-2"></i> Owner-Wise Pipeline Contribution</h6>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sales Executive</th>
+                            <th>Deals</th>
+                            <th>Total Value</th>
+                            <th>Weighted Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var o in Model.OwnerSummaries)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@o.OwnerName</td>
+                                <td>@o.DealCount</td>
+                                <td class="fw-bold">₹@o.TotalAmount.ToString("N0")</td>
+                                <td class="text-success font-monospace">₹@o.WeightedAmount.ToString("N0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Open Opportunities -->
+<div class="crm-table-container">
+    <div class="p-3 border-bottom bg-white d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold mb-0 text-dark">Active Deals in Pipeline</h6>
+    </div>
+    <div class="table-responsive">
+        <table class="table crm-table align-middle">
+            <thead>
+                <tr>
+                    <th>Deal Name</th>
+                    <th>Customer</th>
+                    <th>Stage</th>
+                    <th>Win Prob</th>
+                    <th>Amount</th>
+                    <th>Weighted Value</th>
+                    <th>Close Date</th>
+                    <th>Owner</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var opp in Model.Opportunities)
+                {
+                    <tr>
+                        <td class="fw-bold">@opp.OpportunityName</td>
+                        <td>@opp.CustomerName</td>
+                        <td><span class="badge bg-light text-dark border">@opp.Stage</span></td>
+                        <td>@opp.Probability%</td>
+                        <td class="fw-bold">₹@opp.Amount.ToString("N0")</td>
+                        <td class="text-success font-monospace">₹@opp.WeightedValue.ToString("N0")</td>
+                        <td class="small">@opp.ExpectedCloseDate.ToString("yyyy-MM-dd")</td>
+                        <td class="small"><span class="badge bg-light text-dark border">@opp.OwnerName</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

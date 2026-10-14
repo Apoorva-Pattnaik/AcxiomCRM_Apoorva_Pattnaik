@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --primary: #2563EB;
+    --primary-hover: #1D4ED8;
+    --primary-light: #EFF6FF;
+    --secondary: #64748B;
+    --success: #10B981;
+    --success-light: #ECFDF5;
+    --warning: #F59E0B;
+    --warning-light: #FFFBEB;
+    --danger: #EF4444;
+    --danger-light: #FEF2F2;
+    --info: #06B6D4;
+    --dark: #0F172A;
+    --surface: #FFFFFF;
+    --background: #F8FAFC;
+    --border: #E2E8F0;
+    --text-main: #1E293B;
+    --text-muted: #64748B;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--background);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.navbar-acxiom {
+    background: #0F172A;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 0.75rem 1.5rem;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.35rem;
+    color: #FFFFFF !important;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-brand span.badge-brand {
+    background: linear-gradient(135deg, #3B82F6, #6366F1);
+    color: #FFFFFF;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.nav-link {
+    color: #CBD5E1 !important;
+    font-weight: 500;
+    font-size: 0.925rem;
+    padding: 0.5rem 0.85rem !important;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: #FFFFFF !important;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Role Badges in Header */
+.badge-role-admin {
+    background-color: #EF4444;
+    color: white;
+}
+
+.badge-role-manager {
+    background-color: #8B5CF6;
+    color: white;
+}
+
+.badge-role-sales {
+    background-color: #10B981;
+    color: white;
+}
+
+/* KPI Cards */
+.kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.kpi-primary::before { background-color: var(--primary); }
+.kpi-success::before { background-color: var(--success); }
+.kpi-warning::before { background-color: var(--warning); }
+.kpi-danger::before { background-color: var(--danger); }
+.kpi-info::before { background-color: var(--info); }
+.kpi-purple::before { background-color: #8B5CF6; }
+
+.kpi-title {
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.4rem;
+}
+
+.kpi-value {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.kpi-subtext {
+    font-size: 0.775rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+}
+
+/* Charts Card */
+.chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+    height: 100%;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.chart-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+}
+
+/* Data Tables */
+.crm-table-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.crm-table {
+    margin-bottom: 0;
+}
+
+.crm-table thead th {
+    background-color: #F1F5F9;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.crm-table tbody td {
+    padding: 0.875rem 1rem;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.crm-table tbody tr:hover {
+    background-color: #F8FAFC;
+}
+
+/* Status Badges */
+.badge-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35rem 0.65rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge-status-active { background-color: #DEF7EC; color: #03543F; }
+.badge-status-new { background-color: #E1EFFE; color: #1E429F; }
+.badge-status-contacted { background-color: #FEF08A; color: #854D0E; }
+.badge-status-qualified { background-color: #DCFCE7; color: #166534; }
+.badge-status-unqualified { background-color: #F3F4F6; color: #4B5563; }
+.badge-status-converted { background-color: #EDE9FE; color: #5B21B6; }
+.badge-status-lost { background-color: #FEE2E2; color: #991B1B; }
+.badge-status-won { background-color: #D1FAE5; color: #065F46; }
+.badge-status-proposal { background-color: #FEF3C7; color: #92400E; }
+.badge-status-negotiation { background-color: #FFEDD5; color: #9A3412; }
+.badge-status-planned { background-color: #E0E7FF; color: #3730A3; }
+.badge-status-completed { background-color: #DCFCE7; color: #166534; }
+.badge-status-missed { background-color: #FEE2E2; color: #991B1B; }
+
+/* Filter Bar */
+.filter-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+/* Breadcrumbs */
+.breadcrumb-custom {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    background-color: #FFFFFF;
+    border-top: 1px solid var(--border);
+    padding: 1rem 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}

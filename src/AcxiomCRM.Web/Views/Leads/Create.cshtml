@@ -1,0 +1,120 @@
+@model AcxiomCRM.Application.ViewModels.LeadCreateEditViewModel
+@{
+    ViewData["Title"] = "Capture Lead";
+}
+
+<div class="page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-custom">
+                <li class="breadcrumb-item"><a asp-action="Index">Leads</a></li>
+                <li class="breadcrumb-item active" aria-current="page">New Lead</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Capture Prospective Lead</h1>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger p-2 small mb-3"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="LeadName" class="form-label small fw-bold"></label>
+                            <input asp-for="LeadName" class="form-control" placeholder="Contact Name / Entity" />
+                            <span asp-validation-for="LeadName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CompanyName" class="form-label small fw-bold"></label>
+                            <input asp-for="CompanyName" class="form-control" placeholder="Prospective Organization" />
+                            <span asp-validation-for="CompanyName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label small fw-bold"></label>
+                            <input asp-for="Email" class="form-control" placeholder="lead@domain.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label small fw-bold"></label>
+                            <input asp-for="Phone" class="form-control" placeholder="+91 9876543210" />
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Source" class="form-label small fw-bold"></label>
+                            <select asp-for="Source" class="form-select">
+                                <option value="Website">Website Form</option>
+                                <option value="Referral">Client Referral</option>
+                                <option value="ColdCall">Cold Outreach</option>
+                                <option value="EmailCampaign">Email Campaign</option>
+                                <option value="Event">Conference / Event</option>
+                                <option value="SocialMedia">LinkedIn / Social Media</option>
+                                <option value="Partner">Channel Partner</option>
+                            </select>
+                            <span asp-validation-for="Source" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label small fw-bold"></label>
+                            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.LeadStatus>()"></select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Priority" class="form-label small fw-bold"></label>
+                            <select asp-for="Priority" class="form-select" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.LeadPriority>()"></select>
+                            <span asp-validation-for="Priority" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ExpectedValue" class="form-label small fw-bold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input asp-for="ExpectedValue" class="form-control" type="number" step="1000" />
+                            </div>
+                            <span asp-validation-for="ExpectedValue" class="text-danger small"></span>
+                        </div>
+
+                        @if (User.IsInRole(AcxiomCRM.Domain.Enums.AppRoles.Admin) || User.IsInRole(AcxiomCRM.Domain.Enums.AppRoles.Manager))
+                        {
+                            <div class="col-md-6">
+                                <label asp-for="AssignedToUserId" class="form-label small fw-bold"></label>
+                                <select asp-for="AssignedToUserId" class="form-select" asp-items="ViewBag.Executives">
+                                    <option value="">-- Assign Sales Executive --</option>
+                                </select>
+                                <span asp-validation-for="AssignedToUserId" class="text-danger small"></span>
+                            </div>
+                        }
+
+                        <div class="col-12">
+                            <label asp-for="Notes" class="form-label small fw-bold"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Lead background, initial requirement notes, timeline expectations..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary fw-bold px-4">
+                            <i class="bi bi-save me-1"></i> Save Lead
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

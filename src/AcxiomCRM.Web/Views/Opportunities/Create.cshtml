@@ -1,0 +1,151 @@
+@model AcxiomCRM.Application.ViewModels.OpportunityCreateEditViewModel
+@{
+    ViewData["Title"] = "New Opportunity";
+}
+
+<div class="page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-custom">
+                <li class="breadcrumb-item"><a asp-action="Index">Opportunities</a></li>
+                <li class="breadcrumb-item active" aria-current="page">New Opportunity</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Create Commercial Opportunity</h1>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post" id="opportunityForm">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger p-2 small mb-3"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label asp-for="OpportunityName" class="form-label small fw-bold"></label>
+                            <input asp-for="OpportunityName" class="form-control" placeholder="e.g. Enterprise Cloud Deployment Q4" />
+                            <span asp-validation-for="OpportunityName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CustomerId" class="form-label small fw-bold"></label>
+                            <select asp-for="CustomerId" class="form-select" asp-items="ViewBag.Customers">
+                                <option value="">-- Select Customer Account --</option>
+                            </select>
+                            <span asp-validation-for="CustomerId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Amount" class="form-label small fw-bold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input asp-for="Amount" class="form-control" type="number" step="1000" min="0.01" id="opportunityAmountInput" />
+                            </div>
+                            <span asp-validation-for="Amount" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Stage" class="form-label small fw-bold"></label>
+                            <select asp-for="Stage" class="form-select" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.OpportunityStage>()" id="stageSelect"></select>
+                            <span asp-validation-for="Stage" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Probability" class="form-label small fw-bold"></label>
+                            <div class="input-group">
+                                <input asp-for="Probability" class="form-control" type="number" min="0" max="100" id="probabilityInput" />
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <span asp-validation-for="Probability" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="ExpectedCloseDate" class="form-label small fw-bold"></label>
+                            <input asp-for="ExpectedCloseDate" class="form-control" type="date" id="closeDateInput" />
+                            <span asp-validation-for="ExpectedCloseDate" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label small fw-bold"></label>
+                            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.OpportunityStatus>()" id="statusSelect"></select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+
+                        @if (User.IsInRole(AcxiomCRM.Domain.Enums.AppRoles.Admin) || User.IsInRole(AcxiomCRM.Domain.Enums.AppRoles.Manager))
+                        {
+                            <div class="col-md-6">
+                                <label asp-for="AssignedToUserId" class="form-label small fw-bold"></label>
+                                <select asp-for="AssignedToUserId" class="form-select" asp-items="ViewBag.Executives">
+                                    <option value="">-- Assign Sales Executive --</option>
+                                </select>
+                                <span asp-validation-for="AssignedToUserId" class="text-danger small"></span>
+                            </div>
+                        }
+
+                        <div class="col-12">
+                            <label asp-for="Notes" class="form-label small fw-bold"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Commercial terms, deal champions, competitor positioning..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary fw-bold px-4">
+                            <i class="bi bi-save me-1"></i> Save Opportunity
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            $('#stageSelect').on('change', function() {
+                var stage = $(this).val();
+                if (stage === 'Won' || stage === '4') {
+                    $('#probabilityInput').val(100);
+                    $('#statusSelect').val('Won');
+                } else if (stage === 'Lost' || stage === '5') {
+                    $('#probabilityInput').val(0);
+                    $('#statusSelect').val('Lost');
+                } else if (stage === 'Qualification' || stage === '1') {
+                    $('#probabilityInput').val(10);
+                    $('#statusSelect').val('Open');
+                } else if (stage === 'Proposal' || stage === '2') {
+                    $('#probabilityInput').val(40);
+                    $('#statusSelect').val('Open');
+                } else if (stage === 'Negotiation' || stage === '3') {
+                    $('#probabilityInput').val(75);
+                    $('#statusSelect').val('Open');
+                }
+            });
+
+            // Client-side close-date check
+            $('#closeDateInput').on('change', function() {
+                var sel = new Date($(this).val());
+                var today = new Date();
+                today.setHours(0,0,0,0);
+                var status = $('#statusSelect').val();
+                if ((status === 'Open' || status === '1') && sel < today) {
+                    $(this).addClass('is-invalid');
+                    if ($(this).next('.invalid-feedback-custom').length === 0) {
+                        $(this).after('<div class="invalid-feedback-custom text-danger small mt-1">Expected Close Date cannot be in the past for an active opportunity.</div>');
+                    }
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $(this).next('.invalid-feedback-custom').remove();
+                }
+            });
+        });
+    </script>
+}

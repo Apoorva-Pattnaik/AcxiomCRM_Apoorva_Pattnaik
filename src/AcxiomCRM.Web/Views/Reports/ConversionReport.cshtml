@@ -1,0 +1,101 @@
+@model AcxiomCRM.Application.ViewModels.SalesConversionReportViewModel
+@{
+    ViewData["Title"] = "Sales & Conversion Report";
+}
+
+<div class="page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-custom">
+                <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Conversion Report</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Sales Conversion & Win/Loss Analytics</h1>
+        <div class="text-muted small">Tracking lead conversion efficiency and commercial contract win ratios</div>
+    </div>
+</div>
+
+<!-- KPI Summary Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="kpi-card kpi-purple">
+            <div class="kpi-title">Lead Conversion Rate</div>
+            <div class="kpi-value text-purple">@Model.LeadConversionRate%</div>
+            <div class="kpi-subtext">@Model.LeadsConverted converted of @Model.TotalLeadsReceived leads</div>
+        </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+        <div class="kpi-card kpi-success">
+            <div class="kpi-title">Opportunity Win Rate</div>
+            <div class="kpi-value text-success">@Model.WinRate%</div>
+            <div class="kpi-subtext">@Model.OpportunitiesWon won of @Model.TotalOpportunitiesCreated total deals</div>
+        </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+        <div class="kpi-card kpi-primary">
+            <div class="kpi-title">Total Won Revenue</div>
+            <div class="kpi-value text-primary">₹@Model.TotalWonRevenue.ToString("N0")</div>
+            <div class="kpi-subtext">Cumulative closed contract value</div>
+        </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+        <div class="kpi-card kpi-info">
+            <div class="kpi-title">Average Deal Size</div>
+            <div class="kpi-value text-info">₹@Model.AverageDealSize.ToString("N0")</div>
+            <div class="kpi-subtext">Average per won contract</div>
+        </div>
+    </div>
+</div>
+
+<!-- Funnel Breakdown Card -->
+<div class="card border-0 shadow-sm rounded-4 p-4">
+    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-funnel-fill text-primary me-2"></i> End-to-End Funnel Breakdown</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Funnel Stage</th>
+                    <th>Volume Count</th>
+                    <th>Financial Metric</th>
+                    <th>Conversion / Win Ratio</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="fw-bold">1. Prospect Leads Received</td>
+                    <td>@Model.TotalLeadsReceived</td>
+                    <td class="text-muted">Inflow pipeline</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-purple">2. Qualified Leads Converted</td>
+                    <td>@Model.LeadsConverted</td>
+                    <td class="text-purple fw-semibold">Customer Accounts Created</td>
+                    <td class="fw-bold text-purple">@Model.LeadConversionRate%</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">3. Opportunities Negotiated</td>
+                    <td>@Model.TotalOpportunitiesCreated</td>
+                    <td class="text-muted">Total contracts proposed</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-success">4. Closed - Won Contracts</td>
+                    <td>@Model.OpportunitiesWon</td>
+                    <td class="text-success fw-bold">₹@Model.TotalWonRevenue.ToString("N0")</td>
+                    <td class="fw-bold text-success">@Model.WinRate%</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-danger">5. Closed - Lost Opportunities</td>
+                    <td>@Model.OpportunitiesLost</td>
+                    <td class="text-danger fw-bold">₹@Model.TotalLostRevenue.ToString("N0")</td>
+                    <td class="text-danger">@(Model.TotalOpportunitiesCreated > 0 ? Math.Round((double)Model.OpportunitiesLost / Model.TotalOpportunitiesCreated * 100, 1) : 0)%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

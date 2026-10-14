@@ -1,0 +1,124 @@
+@model AcxiomCRM.Application.ViewModels.AuditReportViewModel
+@{
+    ViewData["Title"] = "Security & Audit Report";
+}
+
+<div class="page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-custom">
+                <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Audit Report</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Enterprise Security & Compliance Audit</h1>
+        <div class="text-muted small">Append-only audit trail tracking logins, updates, deactivations, and security events (Total: @Model.TotalCount)</div>
+    </div>
+</div>
+
+<div class="filter-card">
+    <form method="get" asp-action="AuditReport" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold">User / Identity</label>
+            <input type="text" name="filterUserId" class="form-control form-control-sm" placeholder="Username or ID..." value="@Model.UserId" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold">Module / Entity</label>
+            <input type="text" name="entityName" class="form-control form-control-sm" placeholder="Customer, Lead..." value="@Model.EntityName" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold">Action</label>
+            <input type="text" name="action" class="form-control form-control-sm" placeholder="Create, Update, Login..." value="@Model.Action" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold">From Date</label>
+            <input type="date" name="fromDate" class="form-control form-control-sm" value="@(Model.FromDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold">To Date</label>
+            <input type="date" name="toDate" class="form-control form-control-sm" value="@(Model.ToDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-sm btn-primary w-100">Filter</button>
+            <a asp-action="AuditReport" class="btn btn-sm btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+</div>
+
+<div class="crm-table-container">
+    <div class="table-responsive">
+        <table class="table crm-table align-middle">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Module</th>
+                    <th>Record ID</th>
+                    <th>Result</th>
+                    <th>Details</th>
+                    <th>IP Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Logs.Any())
+                {
+                    @foreach (var log in Model.Logs)
+                    {
+                        <tr>
+                            <td class="small font-monospace">@log.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td class="fw-bold small">@(log.UserName ?? "System")</td>
+                            <td>
+                                <span class="badge @(log.Action.Contains("Login") ? "bg-info" : (log.Action.Contains("Delete") ? "bg-danger" : "bg-primary"))">
+                                    @log.Action
+                                </span>
+                            </td>
+                            <td><span class="badge bg-light text-dark border">@log.EntityName</span></td>
+                            <td class="small font-monospace text-muted">@(log.RecordId ?? "—")</td>
+                            <td>
+                                <span class="badge @(log.Result == "Success" ? "bg-success" : "bg-danger")">
+                                    @log.Result
+                                </span>
+                            </td>
+                            <td class="small text-truncate" style="max-width: 280px;" title="@log.Details">
+                                @(log.Details ?? "—")
+                            </td>
+                            <td class="small font-monospace text-muted">@log.IpAddress</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">No audit logs matching query.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="d-flex justify-content-between align-items-center p-3 border-top">
+            <div class="text-muted small">
+                Page <strong>@Model.CurrentPage</strong> of <strong>@Model.TotalPages</strong>
+            </div>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="AuditReport" asp-route-page="@(Model.CurrentPage - 1)" asp-route-filterUserId="@Model.UserId" asp-route-entityName="@Model.EntityName" asp-route-action="@Model.Action">Previous</a>
+                    </li>
+                    @for (int p = 1; p <= Model.TotalPages; p++)
+                    {
+                        <li class="page-item @(p == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="AuditReport" asp-route-page="@p" asp-route-filterUserId="@Model.UserId" asp-route-entityName="@Model.EntityName" asp-route-action="@Model.Action">@p</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" asp-action="AuditReport" asp-route-page="@(Model.CurrentPage + 1)" asp-route-filterUserId="@Model.UserId" asp-route-entityName="@Model.EntityName" asp-route-action="@Model.Action">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+</div>

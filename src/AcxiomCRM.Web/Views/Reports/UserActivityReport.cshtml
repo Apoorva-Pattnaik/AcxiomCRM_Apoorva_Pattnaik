@@ -1,0 +1,87 @@
+@model AcxiomCRM.Application.ViewModels.UserActivityReportViewModel
+@{
+    ViewData["Title"] = "User Activity Report";
+}
+
+<div class="page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-custom">
+                <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+                <li class="breadcrumb-item active" aria-current="page">User Activity Report</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Executive Action & Productivity Report</h1>
+        <div class="text-muted small">Overview of logged calls, meetings, client emails, and tasks per team member</div>
+    </div>
+</div>
+
+<div class="crm-table-container mb-4">
+    <div class="p-3 border-bottom bg-white">
+        <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-people-fill text-primary me-2"></i> Team Activity Breakdown</h6>
+    </div>
+    <div class="table-responsive">
+        <table class="table crm-table align-middle">
+            <thead>
+                <tr>
+                    <th>Executive Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Calls</th>
+                    <th>Meetings</th>
+                    <th>Emails</th>
+                    <th>Tasks</th>
+                    <th>Total Completed</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model.UserSummaries)
+                {
+                    <tr>
+                        <td class="fw-bold text-dark">@u.FullName</td>
+                        <td class="small text-muted">@u.UserName</td>
+                        <td>
+                            <span class="badge @(u.Role == AcxiomCRM.Domain.Enums.AppRoles.Admin ? "badge-role-admin" : (u.Role == AcxiomCRM.Domain.Enums.AppRoles.Manager ? "badge-role-manager" : "badge-role-sales"))">
+                                @u.Role
+                            </span>
+                        </td>
+                        <td><span class="badge bg-light text-dark border">@u.CallsLogged</span></td>
+                        <td><span class="badge bg-light text-dark border">@u.MeetingsLogged</span></td>
+                        <td><span class="badge bg-light text-dark border">@u.EmailsSent</span></td>
+                        <td><span class="badge bg-light text-dark border">@u.TasksCompleted</span></td>
+                        <td>
+                            <span class="fw-bold fs-6 text-primary">@u.TotalActivities</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Recent Stream -->
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-header bg-white py-3 border-bottom">
+        <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-clock-history text-info me-2"></i> Recent Activity Stream</h6>
+    </div>
+    <div class="card-body p-0">
+        <ul class="list-group list-group-flush small">
+            @foreach (var act in Model.RecentActivities)
+            {
+                <li class="list-group-item px-3 py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-light text-dark border me-2">@act.ActivityType</span>
+                            <strong class="text-dark">@act.Subject</strong>
+                            <span class="text-muted ms-2">&bull; @(act.CustomerName ?? act.LeadName ?? "General")</span>
+                        </div>
+                        <div class="text-end text-muted">
+                            <span class="badge bg-light text-dark border">@act.AssignedToUserName</span>
+                            <span class="ms-2">@act.ActivityDate.ToString("yyyy-MM-dd HH:mm")</span>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

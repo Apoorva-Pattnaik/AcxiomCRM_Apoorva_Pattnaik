@@ -1,0 +1,102 @@
+@model AcxiomCRM.Application.ViewModels.FollowUpReportViewModel
+@{
+    ViewData["Title"] = "Follow-Up Report";
+}
+
+<div class="page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-custom">
+                <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Follow-Up Report</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Follow-Up & Task Adherence Report</h1>
+        <div class="text-muted small">
+            Total Engagements: <strong>@Model.TotalFollowUps</strong> &bull; Planned: <strong>@Model.PlannedCount</strong> &bull; Completed: <strong>@Model.CompletedCount</strong> &bull; Overdue: <strong class="text-danger">@Model.OverdueCount</strong>
+        </div>
+    </div>
+</div>
+
+<div class="filter-card">
+    <form method="get" asp-action="FollowUpReport" class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">From Date</label>
+            <input type="date" name="fromDate" class="form-control form-control-sm" value="@(Model.FromDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">To Date</label>
+            <input type="date" name="toDate" class="form-control form-control-sm" value="@(Model.ToDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold">Status</label>
+            <select name="status" class="form-select form-select-sm" asp-for="StatusFilter" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.FollowUpStatus>()">
+                <option value="">-- All --</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold">Type</label>
+            <select name="type" class="form-select form-select-sm" asp-for="TypeFilter" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.FollowUpType>()">
+                <option value="">-- All --</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-sm btn-primary w-100">Apply</button>
+            <a asp-action="FollowUpReport" class="btn btn-sm btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+</div>
+
+<div class="crm-table-container">
+    <div class="table-responsive">
+        <table class="table crm-table align-middle">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Scheduled Date</th>
+                    <th>Associated Entity</th>
+                    <th>Assigned Executive</th>
+                    <th>Adherence Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Rows.Any())
+                {
+                    @foreach (var r in Model.Rows)
+                    {
+                        <tr>
+                            <td class="fw-bold">@r.Subject</td>
+                            <td><span class="badge bg-light text-dark border">@r.FollowUpType</span></td>
+                            <td><span class="badge bg-light text-dark border">@r.Status</span></td>
+                            <td class="small">@r.FollowUpDate.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="small text-muted">@r.RelatedTo</td>
+                            <td class="small"><span class="badge bg-light text-dark border">@r.OwnerName</span></td>
+                            <td>
+                                @if (r.IsOverdue)
+                                {
+                                    <span class="badge bg-danger"><i class="bi bi-alarm me-1"></i> Overdue</span>
+                                }
+                                else if (r.Status == AcxiomCRM.Domain.Enums.FollowUpStatus.Completed)
+                                {
+                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Completed</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-dark border">On Schedule</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">No follow-up activity data matching filters.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

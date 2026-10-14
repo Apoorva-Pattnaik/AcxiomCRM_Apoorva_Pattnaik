@@ -1,0 +1,171 @@
+@model AcxiomCRM.Application.ViewModels.OpportunityListViewModel
+@{
+    ViewData["Title"] = "Opportunity Management";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Commercial Opportunity Pipeline</h1>
+        <div class="text-muted small">
+            Active Open Deals: <strong>₹@Model.TotalPipelineValue.ToString("N0")</strong> &bull; Weighted Forecast: <strong>₹@Model.TotalWeightedPipelineValue.ToString("N0")</strong>
+        </div>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-briefcase me-1"></i> New Opportunity
+    </a>
+</div>
+
+<!-- Filters -->
+<div class="filter-card">
+    <form method="get" asp-action="Index" class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">Search</label>
+            <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" name="search" class="form-control" placeholder="Opportunity or Customer..." value="@Model.SearchTerm" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">Stage</label>
+            <select name="stage" class="form-select form-select-sm" asp-for="StageFilter" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.OpportunityStage>()">
+                <option value="">-- All Stages --</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">Status</label>
+            <select name="status" class="form-select form-select-sm" asp-for="StatusFilter" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.OpportunityStatus>()">
+                <option value="">-- All Statuses --</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-sm btn-primary w-100">Filter</button>
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+</div>
+
+<!-- Opportunities Table -->
+<div class="crm-table-container">
+    <div class="table-responsive">
+        <table class="table crm-table align-middle">
+            <thead>
+                <tr>
+                    <th>Opportunity Name</th>
+                    <th>Customer</th>
+                    <th>Deal Value</th>
+                    <th>Stage</th>
+                    <th>Probability</th>
+                    <th>Weighted Value</th>
+                    <th>Expected Close</th>
+                    <th>Status</th>
+                    <th>Assigned Rep</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Opportunities.Any())
+                {
+                    @foreach (var o in Model.Opportunities)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@o.OpportunityId" class="fw-bold text-decoration-none">
+                                    @o.OpportunityName
+                                </a>
+                            </td>
+                            <td>
+                                <a asp-controller="Customers" asp-action="Details" asp-route-id="@o.CustomerId" class="small text-decoration-none">
+                                    @o.CustomerName
+                                </a>
+                            </td>
+                            <td class="fw-bold text-dark">₹@o.Amount.ToString("N0")</td>
+                            <td>
+                                @if (o.Stage == AcxiomCRM.Domain.Enums.OpportunityStage.Won)
+                                {
+                                    <span class="badge-status badge-status-won">Won</span>
+                                }
+                                else if (o.Stage == AcxiomCRM.Domain.Enums.OpportunityStage.Lost)
+                                {
+                                    <span class="badge-status badge-status-lost">Lost</span>
+                                }
+                                else if (o.Stage == AcxiomCRM.Domain.Enums.OpportunityStage.Negotiation)
+                                {
+                                    <span class="badge-status badge-status-negotiation">Negotiation</span>
+                                }
+                                else if (o.Stage == AcxiomCRM.Domain.Enums.OpportunityStage.Proposal)
+                                {
+                                    <span class="badge-status badge-status-proposal">Proposal</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-dark border">@o.Stage</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height: 6px; width: 60px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: @o.Probability%"></div>
+                                    </div>
+                                    <span class="small text-muted">@o.Probability%</span>
+                                </div>
+                            </td>
+                            <td class="text-muted small">₹@o.WeightedValue.ToString("N0")</td>
+                            <td class="small">@o.ExpectedCloseDate.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <span class="badge @(o.Status == AcxiomCRM.Domain.Enums.OpportunityStatus.Won ? "bg-success" : (o.Status == AcxiomCRM.Domain.Enums.OpportunityStatus.Lost ? "bg-danger" : "bg-primary"))">
+                                    @o.Status
+                                </span>
+                            </td>
+                            <td class="small"><span class="badge bg-light text-muted border">@o.AssignedToUserName</span></td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Details" asp-route-id="@o.OpportunityId" class="btn btn-outline-secondary" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@o.OpportunityId" class="btn btn-outline-primary" title="Edit Opportunity">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="10" class="text-center py-5 text-muted">
+                            <i class="bi bi-briefcase fs-2 text-muted d-block mb-2"></i>
+                            No opportunities found.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+        <div class="d-flex justify-content-between align-items-center p-3 border-top">
+            <div class="text-muted small">
+                Showing page <strong>@Model.CurrentPage</strong> of <strong>@Model.TotalPages</strong> (Total: @Model.TotalItems records)
+            </div>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)" asp-route-search="@Model.SearchTerm" asp-route-stage="@Model.StageFilter" asp-route-status="@Model.StatusFilter">Previous</a>
+                    </li>
+                    @for (int p = 1; p <= Model.TotalPages; p++)
+                    {
+                        <li class="page-item @(p == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@p" asp-route-search="@Model.SearchTerm" asp-route-stage="@Model.StageFilter" asp-route-status="@Model.StatusFilter">@p</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)" asp-route-search="@Model.SearchTerm" asp-route-stage="@Model.StageFilter" asp-route-status="@Model.StatusFilter">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+</div>

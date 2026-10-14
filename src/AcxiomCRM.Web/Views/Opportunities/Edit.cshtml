@@ -1,0 +1,126 @@
+@model AcxiomCRM.Application.ViewModels.OpportunityCreateEditViewModel
+@{
+    ViewData["Title"] = "Edit Opportunity";
+}
+
+<div class="page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-custom">
+                <li class="breadcrumb-item"><a asp-action="Index">Opportunities</a></li>
+                <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.OpportunityId">@Model.OpportunityName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Edit Commercial Opportunity</h1>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="OpportunityId" />
+                    <input type="hidden" asp-for="LeadId" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger p-2 small mb-3"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label asp-for="OpportunityName" class="form-label small fw-bold"></label>
+                            <input asp-for="OpportunityName" class="form-control" />
+                            <span asp-validation-for="OpportunityName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CustomerId" class="form-label small fw-bold"></label>
+                            <select asp-for="CustomerId" class="form-select" asp-items="ViewBag.Customers"></select>
+                            <span asp-validation-for="CustomerId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Amount" class="form-label small fw-bold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input asp-for="Amount" class="form-control" type="number" step="1000" min="0.01" />
+                            </div>
+                            <span asp-validation-for="Amount" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Stage" class="form-label small fw-bold"></label>
+                            <select asp-for="Stage" class="form-select" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.OpportunityStage>()" id="stageSelect"></select>
+                            <span asp-validation-for="Stage" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Probability" class="form-label small fw-bold"></label>
+                            <div class="input-group">
+                                <input asp-for="Probability" class="form-control" type="number" min="0" max="100" id="probabilityInput" />
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <span asp-validation-for="Probability" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="ExpectedCloseDate" class="form-label small fw-bold"></label>
+                            <input asp-for="ExpectedCloseDate" class="form-control" type="date" id="closeDateInput" />
+                            <span asp-validation-for="ExpectedCloseDate" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label small fw-bold"></label>
+                            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.OpportunityStatus>()" id="statusSelect"></select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+
+                        @if (User.IsInRole(AcxiomCRM.Domain.Enums.AppRoles.Admin) || User.IsInRole(AcxiomCRM.Domain.Enums.AppRoles.Manager))
+                        {
+                            <div class="col-md-6">
+                                <label asp-for="AssignedToUserId" class="form-label small fw-bold"></label>
+                                <select asp-for="AssignedToUserId" class="form-select" asp-items="ViewBag.Executives">
+                                    <option value="">-- Assign Sales Executive --</option>
+                                </select>
+                                <span asp-validation-for="AssignedToUserId" class="text-danger small"></span>
+                            </div>
+                        }
+
+                        <div class="col-12">
+                            <label asp-for="Notes" class="form-label small fw-bold"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Notes" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Details" asp-route-id="@Model.OpportunityId" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary fw-bold px-4">
+                            <i class="bi bi-save me-1"></i> Update Opportunity
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            $('#stageSelect').on('change', function() {
+                var stage = $(this).val();
+                if (stage === 'Won' || stage === '4') {
+                    $('#probabilityInput').val(100);
+                    $('#statusSelect').val('Won');
+                } else if (stage === 'Lost' || stage === '5') {
+                    $('#probabilityInput').val(0);
+                    $('#statusSelect').val('Lost');
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,97 @@
+@model AcxiomCRM.Application.ViewModels.OpportunityReportViewModel
+@{
+    ViewData["Title"] = "Opportunity Report";
+}
+
+<div class="page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-custom">
+                <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Opportunity Report</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Commercial Deals & Stage Report</h1>
+        <div class="text-muted small">
+            Total Opportunities: <strong>@Model.TotalOpportunities</strong> &bull; Total Valuation: <strong>₹@Model.TotalAmount.ToString("N0")</strong> &bull; Weighted Valuation: <strong>₹@Model.TotalWeightedValue.ToString("N0")</strong>
+        </div>
+    </div>
+</div>
+
+<div class="filter-card">
+    <form method="get" asp-action="OpportunityReport" class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">From Date</label>
+            <input type="date" name="fromDate" class="form-control form-control-sm" value="@(Model.FromDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold">To Date</label>
+            <input type="date" name="toDate" class="form-control form-control-sm" value="@(Model.ToDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold">Stage</label>
+            <select name="stage" class="form-select form-select-sm" asp-for="StageFilter" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.OpportunityStage>()">
+                <option value="">-- All --</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold">Status</label>
+            <select name="status" class="form-select form-select-sm" asp-for="StatusFilter" asp-items="Html.GetEnumSelectList<AcxiomCRM.Domain.Enums.OpportunityStatus>()">
+                <option value="">-- All --</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-sm btn-primary w-100">Apply</button>
+            <a asp-action="OpportunityReport" class="btn btn-sm btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+</div>
+
+<div class="crm-table-container">
+    <div class="table-responsive">
+        <table class="table crm-table align-middle">
+            <thead>
+                <tr>
+                    <th>Deal Name</th>
+                    <th>Customer Account</th>
+                    <th>Contract Amount</th>
+                    <th>Stage</th>
+                    <th>Win Prob</th>
+                    <th>Weighted Value</th>
+                    <th>Expected Close</th>
+                    <th>Status</th>
+                    <th>Owner</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Rows.Any())
+                {
+                    @foreach (var r in Model.Rows)
+                    {
+                        <tr>
+                            <td class="fw-bold">@r.OpportunityName</td>
+                            <td>@r.CustomerName</td>
+                            <td class="fw-bold text-dark">₹@r.Amount.ToString("N0")</td>
+                            <td><span class="badge bg-light text-dark border">@r.Stage</span></td>
+                            <td>@r.Probability%</td>
+                            <td class="text-success font-monospace">₹@r.WeightedValue.ToString("N0")</td>
+                            <td class="small">@r.ExpectedCloseDate.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <span class="badge @(r.Status == AcxiomCRM.Domain.Enums.OpportunityStatus.Won ? "bg-success" : (r.Status == AcxiomCRM.Domain.Enums.OpportunityStatus.Lost ? "bg-danger" : "bg-primary"))">
+                                    @r.Status
+                                </span>
+                            </td>
+                            <td class="small"><span class="badge bg-light text-dark border">@r.OwnerName</span></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">No opportunity records found for this filter range.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,24 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    // Additional client-side validation logic
+    $(document).ready(function () {
+        // Enforce follow-up date rule client-side
+        $('input[name="FollowUpDate"]').on('change', function () {
+            var selectedDate = new Date($(this).val());
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+            var status = $('select[name="Status"]').val();
+            if ((!status || status === 'Planned' || status === '1') && selectedDate < today) {
+                $(this).addClass('is-invalid');
+                if ($(this).next('.invalid-feedback-custom').length === 0) {
+                    $(this).after('<div class="invalid-feedback-custom text-danger small mt-1">Follow-up date cannot be earlier than today for a new/planned activity.</div>');
+                }
+            } else {
+                $(this).removeClass('is-invalid');
+                $(this).next('.invalid-feedback-custom').remove();
+            }
+        });
+    });
+</script>
